@@ -15,13 +15,12 @@ return [
         ],
         'asset' => [
             'driver' => 'local',
-            'root' => base_path('asset'),
+            'root' => public_path('asset'),
             'url' => env('APP_URL').'/asset',
             'visibility' => 'public',
         ],
     ],
     'links' => [
         public_path('storage') => storage_path('app/public'),
-        public_path('asset') => base_path('asset'),
     ],
 ];

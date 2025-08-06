@@ -48,6 +48,60 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', 'Product added to cart.');
     }
 
+    public function bulkAdd(Request $request)
+    {
+        try {
+            $products = $request->input('products', []);
+            if (empty($products)) {
+                \Log::warning('No products provided for bulk add', ['user_id' => Auth::id()]);
+                return response()->json(['error' => 'No products provided'], 400);
+            }
+
+            foreach ($products as $productData) {
+                if (!isset($productData['id']) || !isset($productData['quantity'])) {
+                    \Log::warning('Invalid product data in bulk add', [
+                        'user_id' => Auth::id(),
+                        'product_data' => $productData
+                    ]);
+                    return response()->json(['error' => 'Invalid product data'], 400);
+                }
+
+                $product = Product::find($productData['id']);
+                if (!$product) {
+                    \Log::warning('Product not found for bulk add', [
+                        'user_id' => Auth::id(),
+                        'product_id' => $productData['id']
+                    ]);
+                    return response()->json(['error' => "Product ID {$productData['id']} not found"], 404);
+                }
+
+                $quantity = max(1, (int) $productData['quantity']);
+                $cart = Cart::firstOrCreate(
+                    ['user_id' => Auth::id(), 'product_id' => $product->id],
+                    ['quantity' => $quantity]
+                );
+
+                if (!$cart->wasRecentlyCreated) {
+                    $cart->increment('quantity', $quantity);
+                }
+            }
+
+            \Log::info('Bulk products added to cart', [
+                'user_id' => Auth::id(),
+                'products' => $products
+            ]);
+
+            return response()->json(['message' => 'Products added to cart successfully'], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error in bulk add to cart', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'products' => $request->input('products', [])
+            ]);
+            return response()->json(['error' => 'Failed to add products to cart: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function remove($cart)
     {
         $cartItem = Cart::find($cart);

@@ -68,14 +68,13 @@ class DashboardController extends Controller
 
         if ($request->hasFile('profile_picture')) {
             try {
-                // Delete old profile picture if it exists
-                if ($user->profile_picture && file_exists(base_path($user->profile_picture))) {
-                    unlink(base_path($user->profile_picture));
+                if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
+                    unlink(public_path($user->profile_picture));
                 }
                 $image = $request->file('profile_picture');
                 $filename = time() . '.png';
                 $path = 'profile/' . $filename;
-                $image->move(base_path('asset/profile'), $filename);
+                $image->move(public_path('asset/profile'), $filename);
                 $validated['profile_picture'] = 'asset/' . $path;
             } catch (\Exception $e) {
                 \Log::error('Failed to save profile picture', ['error' => $e->getMessage()]);
