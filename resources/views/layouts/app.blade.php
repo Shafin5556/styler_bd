@@ -119,7 +119,7 @@
         }
         .social-btn:hover {
             color: #007bff;
-            transform: scale(1.2);
+            
         }
         /* Dropup Styling */
         .nav-item.dropup:hover .dropdown-menu {
@@ -182,7 +182,7 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .dress-btn:hover {
-            transform: scale(1.05);
+            
             box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
             color: #fff;
         }
@@ -234,7 +234,7 @@
         }
         .footer .social-btn:hover {
             color: #007bff;
-            transform: scale(1.2);
+            
         }
         .footer .newsletter-form .form-control {
             border-radius: 8px 0 0 8px;
