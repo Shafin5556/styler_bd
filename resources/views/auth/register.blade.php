@@ -28,11 +28,17 @@
                         @csrf
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
+                            <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}"
+                                required>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                            <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">phone</label>
+                                <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') }}" placeholder="+8801712345678" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
@@ -40,13 +46,15 @@
                         </div>
                         <div class="mb-3">
                             <label for="password_confirmation" class="form-label">Confirm Password</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+                            <input type="password" name="password_confirmation" id="password_confirmation"
+                                class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-person-plus"></i> Register
                         </button>
                     </form>
-                    <p class="mt-3 text-center text-muted">Already have an account? <a href="{{ route('login') }}">Login</a></p>
+                    <p class="mt-3 text-center text-muted">Already have an account? <a href="{{ route('login') }}">Login</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -57,12 +65,13 @@
 
     <style>
         .auth-section {
-      
+
             background-color: #f8f9fa;
-      
+
             display: flex;
             align-items: center;
         }
+
         .auth-card {
             max-width: 400px;
             width: 100%;
@@ -72,10 +81,12 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .auth-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
         }
+
         .auth-title {
             font-size: 1.8rem;
             font-weight: 600;
@@ -84,6 +95,7 @@
             margin-bottom: 1.5rem;
             font-family: 'Poppins', sans-serif;
         }
+
         .alert {
             border-radius: 8px;
             font-family: 'Poppins', sans-serif;
@@ -91,12 +103,14 @@
             padding: 0.75rem;
             margin-bottom: 1.5rem;
         }
+
         .form-label {
             font-family: 'Poppins', sans-serif;
             font-weight: 500;
             color: #222;
             font-size: 0.95rem;
         }
+
         .form-control {
             border-radius: 8px;
             font-family: 'Poppins', sans-serif;
@@ -105,10 +119,12 @@
             border: 1px solid #dee2e6;
             transition: all 0.3s ease;
         }
+
         .form-control:focus {
             border-color: #007bff;
             box-shadow: 0 0 6px rgba(0, 123, 255, 0.2);
         }
+
         .btn-primary {
             border-radius: 8px;
             font-family: 'Poppins', sans-serif;
@@ -119,20 +135,25 @@
             padding: 0.75rem;
             transition: background-color 0.3s ease;
         }
+
         .btn-primary:hover {
             background-color: #0056b3;
         }
+
         .btn i {
             margin-right: 6px;
         }
+
         .text-muted {
             font-family: 'Poppins', sans-serif;
             font-size: 0.9rem;
         }
+
         @media (max-width: 576px) {
             .auth-title {
                 font-size: 1.5rem;
             }
+
             .auth-card {
                 margin: 0 1rem;
             }

@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    public function index()
+public function index()
     {
-        $cartItems = Cart::where('user_id', Auth::id())->with('product')->get();
+        $cartItems = Cart::where('user_id', Auth::id())->with(['product' => function ($query) {
+            $query->with('images');
+        }])->get();
         \Log::info('Viewing cart', ['user_id' => Auth::id(), 'item_count' => $cartItems->count()]);
         return view('cart.index', compact('cartItems'));
     }

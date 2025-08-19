@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
@@ -12,7 +13,13 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetOtp'])->name('password.email');
+Route::post('/verify-reset-otp', [AuthController::class, 'verifyResetOtp'])->name('password.verify.otp');
+Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
 
 // Public Routes
 // Public Routes
@@ -33,6 +40,7 @@ Route::get('/subcategories/{subcategory}/products', [ProductController::class, '
 Route::middleware(['auth'])->group(function () {
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders');
     Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create')->middleware('auth');
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');

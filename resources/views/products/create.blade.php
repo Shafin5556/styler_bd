@@ -3,8 +3,6 @@
 @section('content')
     <div class="admin-section">
         <div class="container">
-
-
             <!-- Alerts -->
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -22,58 +20,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-
-            <!-- Categories Table -->
-            <div class="card shadow-sm mb-5">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Existing Categories & Subcategories</h4>
-                </div>
-                <div class="card-body">
-                    @if($categories->isEmpty())
-                        <p class="text-muted">No categories found.</p>
-                    @else
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Parent Category</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($categories as $category)
-                                        <tr>
-                                            <td class="fw-medium">{{ $category->name }}</td>
-                                            <td>None</td>
-                                            <td>
-                                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this category?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        @foreach($category->subcategories as $subcategory)
-                                            <tr>
-                                                <td>↳ {{ $subcategory->name }}</td>
-                                                <td>{{ $category->name }}</td>
-                                                <td>
-                                                    <form action="{{ route('categories.destroy', $subcategory->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this subcategory?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
-                </div>
-            </div>
 
             <!-- Forms Section -->
             <div class="row">
@@ -163,8 +109,11 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="image" class="form-label">Image (PNG only)</label>
-                                    <input type="file" name="image" id="image" class="form-control" accept="image/png">
+                                    <label for="images" class="form-label">Images (PNG only, up to 5)</label>
+                                    <input type="file" name="images[]" id="images" class="form-control" accept="image/png" multiple>
+                                    @error('images.*')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="d-flex gap-2">
                                     <button type="submit" class="btn btn-primary flex-grow-1"><i class="bi bi-plus-circle"></i> Add Product</button>
@@ -173,6 +122,58 @@
                             </form>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Categories Table -->
+            <div class="card shadow-sm mb-5">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Existing Categories & Subcategories</h4>
+                </div>
+                <div class="card-body">
+                    @if($categories->isEmpty())
+                        <p class="text-muted">No categories found.</p>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Parent Category</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($categories as $category)
+                                        <tr>
+                                            <td class="fw-medium">{{ $category->name }}</td>
+                                            <td>None</td>
+                                            <td>
+                                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        @foreach($category->subcategories as $subcategory)
+                                            <tr>
+                                                <td>↳ {{ $subcategory->name }}</td>
+                                                <td>{{ $category->name }}</td>
+                                                <td>
+                                                    <form action="{{ route('categories.destroy', $subcategory->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this subcategory?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

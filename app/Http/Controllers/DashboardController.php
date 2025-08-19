@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         \Log::info('Accessing admin dashboard', [
             'user_id' => Auth::user()->id,
@@ -24,11 +24,20 @@ class DashboardController extends Controller
             return redirect('/')->with('error', 'You are not authorized to access the admin dashboard.');
         }
 
-        $products = Product::with('category')->get();
-        return view('admin.dashboard', compact('products'));
+        $query = Product::with('category', 'images');
+
+        if ($request->has('search') && $request->search !== '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+            \Log::info('Filtering products by search term', ['search' => $request->search]);
+        }
+
+        $products = $query->get();
+        $admin = Auth::user(); // Pass authenticated user to the view
+
+        return view('admin.dashboard', compact('products', 'admin'));
     }
 
-    public function userDashboard()
+  public function userDashboard()
     {
         \Log::info('Accessing user dashboard', [
             'user_id' => Auth::user()->id,
@@ -44,7 +53,9 @@ class DashboardController extends Controller
         }
 
         $user = Auth::user();
-        $cartItems = Cart::where('user_id', Auth::id())->with('product')->get();
+        $cartItems = Cart::where('user_id', Auth::id())->with(['product' => function ($query) {
+            $query->with('images');
+        }])->get();
         return view('user.dashboard', compact('user', 'cartItems'));
     }
 

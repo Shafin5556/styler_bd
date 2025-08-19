@@ -3,9 +3,6 @@
 @section('content')
     <div class="admin-section">
         <div class="container">
- 
-  
-
             <!-- Alerts -->
             @if($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -53,12 +50,28 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="image" class="form-label">Image (PNG only)</label>
-                                    <input type="file" name="image" id="image" class="form-control" accept="image/png">
-                                    @if($product->image)
-                                        <div class="mt-3 image-preview">
-                                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="img-fluid rounded">
-                                            <p class="text-muted mt-2">Current Image</p>
+                                    <label for="images" class="form-label">Images (PNG only, up to 5 total)</label>
+                                    <input type="file" name="images[]" id="images" class="form-control" accept="image/png" multiple>
+                                    @error('images.*')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
+                                    @error('images')
+                                        <div class="text-danger mt-1">{{ $message }}</div>
+                                    @enderror
+                                    @if($product->images->isNotEmpty())
+                                        <div class="image-preview mt-3">
+                                            <p class="text-muted">Current Images (check to delete):</p>
+                                            <div class="d-flex flex-wrap gap-3">
+                                                @foreach($product->images as $image)
+                                                    <div class="image-item">
+                                                        <img src="{{ asset($image->image) }}" alt="{{ $product->name }}" class="img-fluid rounded" style="max-width: 100px;">
+                                                        <div class="form-check mt-2">
+                                                            <input type="checkbox" name="delete_images[]" value="{{ $image->id }}" class="form-check-input" id="delete_image_{{ $image->id }}">
+                                                            <label class="form-check-label" for="delete_image_{{ $image->id }}">Delete</label>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -169,7 +182,7 @@
         }
         /* Image Preview Styling */
         .image-preview img {
-            max-width: 150px;
+            max-width: 100px;
             height: auto;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -177,6 +190,15 @@
         .image-preview p {
             font-size: 0.9rem;
             margin-top: 0.5rem;
+        }
+        .image-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-check-label {
+            font-size: 0.85rem;
+            color: #555;
         }
         @media (max-width: 991px) {
             .admin-title {
@@ -192,6 +214,9 @@
         @media (max-width: 767px) {
             .admin-section {
                 padding: 2rem 0;
+            }
+            .image-preview img {
+                max-width: 80px;
             }
         }
     </style>

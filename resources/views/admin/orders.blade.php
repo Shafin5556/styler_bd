@@ -3,7 +3,7 @@
 @section('content')
     <div class="admin-section">
         <div class="container">
-            <!-- Header with Admin Details and Buttons -->
+            <!-- Header with Admin Details and Back Button -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div class="d-flex align-items-center gap-3">
                     <div class="admin-profile-pic">
@@ -20,13 +20,7 @@
                         <p class="admin-info mb-0 text-muted">{{ $admin->email }} • {{ ucfirst($admin->role) }}</p>
                     </div>
                 </div>
-                <div class="d-flex gap-2">
-                    <a href="{{ route('admin.orders') }}" class="btn btn-primary btn-sm"><i class="bi bi-list-ul"></i> Order List</a>
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</button>
-                    </form>
-                </div>
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
             </div>
 
             <!-- Alerts -->
@@ -43,54 +37,43 @@
                 </div>
             @endif
 
-            <!-- Products Table -->
+            <!-- Carts Table -->
             <div class="card shadow-sm">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Products</h4>
-                    <div class="d-flex gap-2 align-items-center">
-                        <form action="{{ route('admin.dashboard') }}" method="GET" class="d-flex gap-2">
-                            <input type="text" name="search" class="form-control form-control-sm" placeholder="Search by product name..." value="{{ request('search') }}">
-                            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
-                        </form>
-                        <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> Add Product</a>
-                    </div>
+                    <h4 class="mb-0">Cart Items</h4>
+                    <form action="{{ route('admin.orders') }}" method="GET" class="d-flex gap-2">
+                        <input type="text" name="search" class="form-control form-control-sm" placeholder="Search by user name or email..." value="{{ request('search') }}">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+                    </form>
                 </div>
                 <div class="card-body">
-                    @if($products->isEmpty())
-                        <p class="text-muted text-center">No products found.</p>
+                    @if($carts->isEmpty())
+                        <p class="text-muted text-center">No cart items found.</p>
                     @else
                         <div class="table-responsive">
-                            <table class="table table-hover" id="products-table">
+                            <table class="table table-hover" id="carts-table">
                                 <thead>
                                     <tr>
-                                        <th>Image</th>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Category</th>
-                                        <th>Actions</th>
+                                        <th>Cart ID</th>
+                                        <th>User</th>
+                                        <th>Product</th>
+                                        <th>Subtotal</th>
+                                        <th>Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($products as $product)
-                                        <tr data-name="{{ strtolower($product->name) }}">
+                                    @foreach($carts as $cart)
+                                        <tr data-search="{{ strtolower($cart->user->name . ' ' . $cart->user->email) }}">
+                                            <td>{{ $cart->id }}</td>
                                             <td>
-                                                @if($product->images->isNotEmpty())
-                                                    <img src="{{ asset($product->images->first()->image) }}" alt="{{ $product->name }}" class="img-fluid rounded" style="max-width: 80px; height: 60px; object-fit: cover;">
-                                                @else
-                                                    <span class="text-muted">No Image</span>
-                                                @endif
+                                                <div>{{ $cart->user->name }}</div>
+                                                <small class="text-muted">{{ $cart->user->email }}</small>
                                             </td>
-                                            <td class="fw-medium">{{ $product->name }}</td>
-                                            <td>৳{{ number_format($product->price, 2) }}</td>
-                                            <td>{{ $product->category->name }}</td>
                                             <td>
-                                                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-outline-warning me-1"><i class="bi bi-pencil"></i></a>
-                                                <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this product?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                                </form>
+                                                <div>{{ $cart->product->name }} (x{{ $cart->quantity }} @ ৳{{ number_format($cart->product->price, 2) }})</div>
                                             </td>
+                                            <td>৳{{ number_format($cart->quantity * $cart->product->price, 2) }}</td>
+                                            <td>{{ $cart->created_at->format('d M Y') }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -109,34 +92,34 @@
         // Client-side search filtering
         document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.querySelector('input[name="search"]');
-            const tableRows = document.querySelectorAll('#products-table tbody tr');
+            const tableRows = document.querySelectorAll('#carts-table tbody tr');
 
             searchInput.addEventListener('input', function () {
                 const searchTerm = searchInput.value.toLowerCase();
 
                 tableRows.forEach(row => {
-                    const productName = row.getAttribute('data-name');
-                    if (productName.includes(searchTerm)) {
+                    const searchData = row.getAttribute('data-search');
+                    if (searchData.includes(searchTerm)) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
                     }
                 });
 
-                // Show "No products found" if no rows are visible
-                const tableBody = document.querySelector('#products-table tbody');
-                const noProductsMessage = document.querySelector('.text-muted.text-center');
+                // Show "No cart items found" if no rows are visible
+                const tableBody = document.querySelector('#carts-table tbody');
+                const noCartsMessage = document.querySelector('.text-muted.text-center');
                 const visibleRows = Array.from(tableRows).filter(row => row.style.display !== 'none');
                 if (visibleRows.length === 0) {
-                    if (!noProductsMessage) {
+                    if (!noCartsMessage) {
                         const message = document.createElement('p');
                         message.className = 'text-muted text-center';
-                        message.textContent = 'No products found.';
+                        message.textContent = 'No cart items found.';
                         tableBody.parentElement.appendChild(message);
                     }
                 } else {
-                    if (noProductsMessage) {
-                        noProductsMessage.remove();
+                    if (noCartsMessage) {
+                        noCartsMessage.remove();
                     }
                 }
             });
@@ -206,35 +189,21 @@
             background-color: #1e40af;
             transform: translateY(-2px);
         }
-        .btn-outline-warning {
-            border-color: #f59e0b;
-            color: #f59e0b;
+        .btn-outline-secondary {
+            border-color: #6b7280;
+            color: #6b7280;
             border-radius: 6px;
             font-family: 'Inter', sans-serif;
             font-weight: 500;
             padding: 0.25rem 0.5rem;
             transition: all 0.3s ease;
         }
-        .btn-outline-warning:hover {
-            background-color: #f59e0b;
+        .btn-outline-secondary:hover {
+            background-color: #6b7280;
             color: #fff;
             transform: translateY(-2px);
         }
-        .btn-outline-danger {
-            border-color: #dc3545;
-            color: #dc3545;
-            border-radius: 6px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 500;
-            padding: 0.25rem 0.5rem;
-            transition: all 0.3s ease;
-        }
-        .btn-outline-danger:hover {
-            background-color: #dc3545;
-            color: #fff;
-            transform: translateY(-2px);
-        }
-        .btn-outline-danger.btn-sm, .btn-outline-warning.btn-sm, .btn-primary.btn-sm {
+        .btn-sm {
             padding: 0.2rem 0.5rem;
         }
         .btn i {
@@ -291,13 +260,6 @@
             transform: scale(1.01);
             transition: all 0.2s ease;
         }
-        .table img {
-            max-width: 80px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            object-fit: cover;
-            height: 60px;
-        }
         .text-muted {
             font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
@@ -336,10 +298,6 @@
             .table {
                 font-size: 0.85rem;
             }
-            .table img {
-                max-width: 60px;
-                height: 50px;
-            }
             .form-control-sm {
                 max-width: 150px;
             }
@@ -353,9 +311,13 @@
                 align-items: flex-start;
                 gap: 1rem;
             }
-            .d-flex.gap-2 {
+            .card-header .d-flex {
                 flex-direction: column;
-                width: 100%;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            .form-control-sm {
+                max-width: 100%;
             }
             .btn-sm {
                 width: 100%;
@@ -365,9 +327,6 @@
                 width: 36px;
                 height: 36px;
                 font-size: 0.9rem;
-            }
-            .form-control-sm {
-                max-width: 100%;
             }
         }
     </style>

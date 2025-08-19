@@ -5,20 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\ProductImage;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        return view('home');
+        $products = Product::with('images')->get();
+        $featuredProducts = Product::with('images')->orderBy('created_at', 'desc')->take(6)->get();
+        return view('home', compact('products', 'featuredProducts'));
     }
 
     public function shop(Request $request)
     {
         \Log::info('Accessing shop page', ['filters' => $request->only(['name', 'min_price', 'max_price', 'category_id'])]);
 
-        $query = Product::query();
+        $query = Product::query()->with('images'); // Eager-load images for each product
 
         if ($request->filled('name')) {
             $query->where('name', 'like', '%' . $request->input('name') . '%');
@@ -69,14 +72,20 @@ class ProductController extends Controller
             \Log::warning('Subcategory not found for products request', ['subcategory_id' => $subcategory]);
             return response()->json(['error' => 'Subcategory not found'], 404);
         }
-        $products = Product::where('category_id', $subcategory)->select('id', 'name', 'price', 'image')->get();
+        $products = Product::where('category_id', $subcategory)->with('images', 'category')->select('id', 'name', 'price', 'description', 'category_id', 'created_at', 'updated_at')->get();
         \Log::info('Fetched products for subcategory', ['subcategory_id' => $subcategory, 'product_count' => $products->count()]);
         return response()->json($products->map(function ($product) {
             return [
                 'id' => $product->id,
                 'name' => $product->name,
                 'price' => $product->price,
-                'image' => $product->image ? asset($product->image) : null,
+                'description' => $product->description,
+                'category' => $product->category->name,
+                'created_at' => $product->created_at->format('d M Y'),
+                'updated_at' => $product->updated_at->format('d M Y'),
+                'images' => $product->images->map(function ($image) {
+                    return asset($image->image);
+                })->toArray(),
             ];
         }));
     }
@@ -85,7 +94,7 @@ class ProductController extends Controller
     {
         \Log::info('Accessing category page', ['category' => $category]);
         $category = Category::findOrFail($category);
-        
+
         if ($category->parent_id === null) {
             $subcategoryIds = $category->subcategories->pluck('id')->toArray();
             $categoryIds = array_merge([$category->id], $subcategoryIds);
@@ -136,25 +145,32 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:png|max:2048',
+            'images.*' => 'nullable|image|mimes:png|max:2048', // Validate each image
+            'images' => 'max:5', // Limit to 5 images
         ]);
 
-        if ($request->hasFile('image')) {
+        // Create the product
+        $product = Product::create($validated);
+
+        // Handle multiple image uploads
+        if ($request->hasFile('images')) {
             try {
-                $image = $request->file('image');
-                $filename = time() . '.png';
-                $path = 'product/' . $filename;
-                $image->move(public_path('asset/product'), $filename);
-                $validated['image'] = 'asset/' . $path;
+                foreach ($request->file('images') as $image) {
+                    $filename = time() . '_' . uniqid() . '.png';
+                    $path = 'product/' . $filename;
+                    $image->move(public_path('asset/product'), $filename);
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => 'asset/' . $path,
+                    ]);
+                }
             } catch (\Exception $e) {
-                \Log::error('Failed to save image', ['error' => $e->getMessage()]);
-                return redirect()->back()->withErrors(['image' => 'Failed to save image: ' . $e->getMessage()]);
+                \Log::error('Failed to save images', ['error' => $e->getMessage()]);
+                return redirect()->back()->withErrors(['images' => 'Failed to save images: ' . $e->getMessage()]);
             }
         }
 
-        Product::create($validated);
-
-        \Log::info('Product created', ['name' => $validated['name'], 'image' => $validated['image'] ?? null]);
+        \Log::info('Product created', ['name' => $validated['name'], 'product_id' => $product->id]);
         return redirect()->route('admin.dashboard')->with('success', 'Product added successfully.');
     }
 
@@ -169,7 +185,8 @@ class ProductController extends Controller
         }
 
         $categories = Category::whereNull('parent_id')->with('subcategories')->get();
-        \Log::info('Loading product edit view', ['product_id' => $product->id, 'category_count' => $categories->count()]);
+        $product->load('images'); // Load associated images
+        \Log::info('Loading product edit view', ['product_id' => $product->id, 'category_count' => $categories->count(), 'image_count' => $product->images->count()]);
         return view('products.edit', compact('product', 'categories'));
     }
 
@@ -188,28 +205,57 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:png|max:2048',
+            'images.*' => 'nullable|image|mimes:png|max:2048', // Validate each new image
+            'delete_images' => 'nullable|array', // Array of image IDs to delete
+            'delete_images.*' => 'exists:product_images,id', // Validate image IDs
         ]);
 
-        if ($request->hasFile('image')) {
-            try {
-                if ($product->image && file_exists(public_path($product->image))) {
-                    unlink(public_path($product->image));
+        // Update product details
+        $product->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'price' => $validated['price'],
+            'category_id' => $validated['category_id'],
+        ]);
+
+        // Handle image deletions
+        if (!empty($validated['delete_images'])) {
+            foreach ($validated['delete_images'] as $imageId) {
+                $image = ProductImage::find($imageId);
+                if ($image && file_exists(public_path($image->image))) {
+                    unlink(public_path($image->image));
                 }
-                $image = $request->file('image');
-                $filename = time() . '.png';
-                $path = 'product/' . $filename;
-                $image->move(public_path('asset/product'), $filename);
-                $validated['image'] = 'asset/' . $path;
-            } catch (\Exception $e) {
-                \Log::error('Failed to save image', ['error' => $e->getMessage()]);
-                return redirect()->back()->withErrors(['image' => 'Failed to save image: ' . $e->getMessage()]);
+                $image?->delete();
             }
         }
 
-        $product->update($validated);
+        // Handle new image uploads
+        if ($request->hasFile('images')) {
+            $currentImageCount = $product->images()->count();
+            $newImages = $request->file('images');
+            $availableSlots = 5 - $currentImageCount;
 
-        \Log::info('Product updated', ['name' => $validated['name'], 'image' => $validated['image'] ?? $product->image]);
+            if (count($newImages) > $availableSlots) {
+                return redirect()->back()->withErrors(['images' => 'You can only add ' . $availableSlots . ' more images (max 5 total).']);
+            }
+
+            try {
+                foreach ($newImages as $image) {
+                    $filename = time() . '_' . uniqid() . '.png';
+                    $path = 'product/' . $filename;
+                    $image->move(public_path('asset/product'), $filename);
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image' => 'asset/' . $path,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                \Log::error('Failed to save images', ['error' => $e->getMessage()]);
+                return redirect()->back()->withErrors(['images' => 'Failed to save images: ' . $e->getMessage()]);
+            }
+        }
+
+        \Log::info('Product updated', ['name' => $validated['name'], 'product_id' => $product->id, 'image_count' => $product->images()->count()]);
         return redirect()->route('admin.dashboard')->with('success', 'Product updated successfully.');
     }
 
@@ -224,9 +270,13 @@ class ProductController extends Controller
         }
 
         try {
-            if ($product->image && file_exists(public_path($product->image))) {
-                unlink(public_path($product->image));
+            // Delete associated images
+            foreach ($product->images as $image) {
+                if (file_exists(public_path($image->image))) {
+                    unlink(public_path($image->image));
+                }
             }
+            $product->images()->delete();
             $product->delete();
             \Log::info('Product deleted', ['name' => $product->name, 'id' => $product->id]);
             return redirect()->route('admin.dashboard')->with('success', 'Product deleted successfully.');

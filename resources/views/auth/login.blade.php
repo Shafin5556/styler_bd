@@ -38,7 +38,10 @@
                             <i class="bi bi-box-arrow-in-right"></i> Login
                         </button>
                     </form>
-                    <p class="mt-3 text-center text-muted">Don't have an account? <a href="{{ route('register') }}">Register</a></p>
+                    <p class="mt-3 text-center text-muted">
+                        Don't have an account? <a href="{{ route('register') }}">Register</a> | 
+                        <a href="{{ route('password.request') }}">Forgot Password?</a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -49,9 +52,7 @@
 
     <style>
         .auth-section {
-   
             background-color: #f8f9fa;
-        
             display: flex;
             align-items: center;
         }
