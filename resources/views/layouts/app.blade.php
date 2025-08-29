@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,41 +16,50 @@
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
         }
+
         /* Primary Navbar Styling */
         .navbar-primary {
             background-color: #ffffff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 1rem 0;
         }
+
         .navbar-brand img {
             height: 50px;
             transition: transform 0.3s ease;
         }
+
         .navbar-brand img:hover {
             transform: scale(1.05);
         }
+
         .search-form {
             flex-grow: 1;
             margin: 0 20px;
         }
+
         .search-form .input-group {
             width: 100%;
         }
+
         .search-form input.form-control {
             border-radius: 8px 0 0 8px;
             border: 1px solid #ced4da;
             font-size: 0.9rem;
         }
+
         .search-form button {
             border-radius: 0 8px 8px 0;
             background-color: #007bff;
             border-color: #007bff;
             transition: background-color 0.3s ease;
         }
+
         .search-form button:hover {
             background-color: #0056b3;
             border-color: #0056b3;
         }
+
         /* Cart Button Styling */
         .cart-btn {
             font-size: 1.2rem;
@@ -58,17 +68,21 @@
             transition: color 0.3s ease, transform 0.3s ease;
             text-decoration: none;
         }
+
         .navbar-nav {
             flex-direction: row;
         }
+
         .cart-btn:hover {
             color: #007bff;
             transform: scale(1.1);
         }
+
         .cart-btn.active {
             color: #007bff;
             font-weight: 700;
         }
+
         /* User Button Styling */
         .user-btn {
             font-size: 1.2rem;
@@ -77,39 +91,50 @@
             transition: color 0.3s ease, transform 0.3s ease;
             text-decoration: none;
         }
+
         .user-btn:hover {
             color: #007bff;
             transform: scale(1.1);
         }
+
         .user-btn.active {
             color: #007bff;
             font-weight: 700;
         }
+
         /* Secondary Navbar Styling */
         .navbar-secondary {
-            background-color: #f1f3f5;
+            /* background-color: #f1f3f5; */
+            background-color: white;
+                height: 60px;
             padding: 0.5rem 0;
         }
+
         .navbar-secondary .navbar-nav {
             gap: 15px;
         }
+
         .navbar-nav .nav-link {
             color: #333;
             font-weight: 500;
             transition: color 0.3s ease;
         }
+
         .navbar-nav .nav-link:hover {
             color: #007bff;
         }
+
         .navbar-nav .nav-link.active {
             color: #007bff;
             font-weight: 700;
         }
+
         /* Social Icons Styling */
         .social-icons {
             gap: 10px;
             margin-left: 15px;
         }
+
         .social-btn {
             font-size: 1.1rem;
             padding: 0.5rem;
@@ -117,10 +142,12 @@
             transition: color 0.3s ease, transform 0.3s ease;
             text-decoration: none;
         }
+
         .social-btn:hover {
             color: #007bff;
             transform: scale(1.2);
         }
+
         /* Dropup Styling */
         .nav-item.dropup:hover .dropdown-menu {
             display: block;
@@ -128,6 +155,7 @@
             bottom: 100%;
             top: auto;
         }
+
         .dropdown-menu {
             border: none;
             border-radius: 8px;
@@ -135,24 +163,29 @@
             background-color: #ffffff;
             min-width: 200px;
         }
+
         .dropdown-item {
             padding: 10px 20px;
             color: #333;
             font-weight: 400;
             transition: background-color 0.3s ease;
         }
+
         .dropdown-item:hover {
             background-color: #f1f3f5;
             color: #007bff;
         }
+
         .dropdown-item.active {
             color: #007bff;
             font-weight: 700;
             background-color: #e9ecef;
         }
+
         .dropdown-submenu {
             position: relative;
         }
+
         .dropdown-submenu .dropdown-menu {
             top: 0;
             left: 100%;
@@ -160,16 +193,19 @@
             display: none;
             border-radius: 8px;
         }
-        .dropdown-submenu:hover > .dropdown-menu {
+
+        .dropdown-submenu:hover>.dropdown-menu {
             display: block;
         }
-        .dropdown-submenu > a:after {
+
+        .dropdown-submenu>a:after {
             content: "\203A";
             float: right;
             margin-top: 2px;
             font-weight: bold;
             color: #007bff;
         }
+
         /* Dress Button Styling */
         .dress-btn {
             font-size: 1rem;
@@ -181,61 +217,74 @@
             text-decoration: none;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .dress-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
             color: #fff;
         }
+
         .dress-btn.active {
             background: linear-gradient(45deg, #0056b3, #00b7eb);
             font-weight: 700;
         }
+
         /* Alert Styling */
         .alert {
             border-radius: 8px;
             margin-bottom: 1.5rem;
         }
+
         /* Footer Styling */
         .footer {
-         background: linear-gradient(to bottom, #000000 0%, #1a1a1a 20%);
+            background: linear-gradient(to bottom, #000000 0%, #1a1a1a 20%);
             color: #ffffff;
             padding: 3rem 0 1rem;
             font-family: 'Poppins', sans-serif;
             margin-top: 2rem;
         }
+
         .footer a {
             color: #d1d5db;
             text-decoration: none;
             transition: color 0.3s ease;
         }
+
         .footer a:hover {
             color: #007bff;
         }
+
         .footer h5 {
             font-weight: 600;
             font-size: 1.1rem;
             color: #ffffff;
             margin-bottom: 1.5rem;
         }
+
         .footer ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
+
         .footer ul li {
             margin-bottom: 0.5rem;
         }
+
         .footer .social-icons {
             gap: 15px;
         }
+
         .footer .social-btn {
             font-size: 1.5rem;
             color: #d1d5db;
         }
+
         .footer .social-btn:hover {
             color: #007bff;
             transform: scale(1.2);
         }
+
         .footer .newsletter-form .form-control {
             border-radius: 8px 0 0 8px;
             border: 1px solid #4b5563;
@@ -243,49 +292,99 @@
             color: #ffffff;
             font-size: 0.9rem;
         }
+
         .footer .newsletter-form .form-control::placeholder {
             color: #9ca3af;
         }
+
         .footer .newsletter-form .btn-primary {
             border-radius: 0 8px 8px 0;
             background-color: #007bff;
             border-color: #007bff;
             font-weight: 500;
         }
+
         .footer .newsletter-form .btn-primary:hover {
             background-color: #0056b3;
             border-color: #0056b3;
         }
+
         .footer .divider {
             border-top: 1px solid #4b5563;
             margin: 2rem 0;
         }
+
         .footer .copyright {
             font-size: 0.85rem;
             color: #9ca3af;
         }
+
         /* Responsive Footer */
         @media (max-width: 767px) {
-            .footer .col-md-3, .footer .col-md-6 {
+
+            .footer .col-md-3,
+            .footer .col-md-6 {
                 margin-bottom: 2rem;
             }
+
             .footer .social-icons {
                 justify-content: center;
             }
+
             .footer .newsletter-form .input-group {
                 flex-direction: column;
             }
+
             .footer .newsletter-form .form-control {
                 border-radius: 8px;
                 margin-bottom: 0.5rem;
             }
+
             .footer .newsletter-form .btn-primary {
                 border-radius: 8px;
                 width: 100%;
             }
         }
+
+        /* Category Dropdowns Container */
+        .category-dropdowns {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+            margin: -40px 0px 0px 0px;
+            /* Matches navbar-nav gap */
+            padding: 0.5rem 0;
+            /* Aligns with navbar-secondary padding */
+        }
+
+        /* Ensure hover works for dropdowns */
+/* Ensure hover works for dropdowns */
+.category-dropdowns .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+    top: 100%;
+    bottom: auto;
+}
+
+        /* Ensure nav-link styling in category-dropdowns */
+        .category-dropdowns .nav-link {
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .category-dropdowns .nav-link:hover {
+            color: #007bff;
+        }
+
+        .category-dropdowns .nav-link.active {
+            color: #007bff;
+            font-weight: 700;
+        }
     </style>
 </head>
+
 <body>
     <!-- Primary Navbar -->
     <nav class="navbar navbar-primary">
@@ -293,17 +392,19 @@
             <a class="navbar-brand" href="/"><img src="{{ asset('asset/logo/logo.png') }}" alt="Styler BD"></a>
             <form class="search-form" action="{{ route('shop') }}" method="GET">
                 <div class="input-group">
-                    <input type="text" name="name" id="name" class="form-control" placeholder="Enter product name" value="{{ request('name') }}">
+                    <input type="text" name="name" id="name" class="form-control" placeholder="Enter product name"
+                        value="{{ request('name') }}">
                     <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
                 </div>
             </form>
             <div class="navbar-nav">
                 @auth
-                    <a class="cart-btn {{ request()->routeIs('cart.index') ? 'active' : '' }}" href="{{ route('cart.index') }}" title="Cart"><i class="bi bi-cart"></i></a>
+                    <a class="cart-btn {{ request()->routeIs('cart.index') ? 'active' : '' }}"
+                        href="{{ route('cart.index') }}" title="Cart"><i class="bi bi-cart"></i></a>
                 @endauth
-                <a class="user-btn {{ request()->routeIs('login') || request()->routeIs('admin.dashboard') || request()->routeIs('user.dashboard') ? 'active' : '' }}" 
-                   href="{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('user.dashboard')) : route('login') }}" 
-                   title="{{ auth()->check() ? (auth()->user()->role === 'admin' ? 'Admin Dashboard' : 'User Dashboard') : 'Login' }}">
+                <a class="user-btn {{ request()->routeIs('login') || request()->routeIs('admin.dashboard') || request()->routeIs('user.dashboard') ? 'active' : '' }}"
+                    href="{{ auth()->check() ? (auth()->user()->role === 'admin' ? route('admin.dashboard') : route('user.dashboard')) : route('login') }}"
+                    title="{{ auth()->check() ? (auth()->user()->role === 'admin' ? 'Admin Dashboard' : 'User Dashboard') : 'Login' }}">
                     <i class="bi bi-person-fill"></i>
                 </a>
             </div>
@@ -311,89 +412,102 @@
     </nav>
 
     <!-- Secondary Navbar -->
-    <nav class="navbar navbar-secondary">
-        <div class="container">
-            <div class="navbar-nav d-flex flex-row align-items-center w-100">
-                <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="/">Home</a>
+<!-- Secondary Navbar -->
+<nav class="navbar navbar-secondary">
+    <div class="container">
+        <!-- Navbar Nav for Dress Up and Social Icons -->
+        <div class="navbar-nav d-flex flex-row align-items-center w-100">
+            <a class="dress-btn ms-auto {{ request()->routeIs('dressup') ? 'active' : '' }}" href="{{ route('dressup') }}">Dress Up</a>
+            <div class="social-icons d-flex flex-row align-items-center">
+                <a class="social-btn" href="https://wa.me/1234567890" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                <a class="social-btn" href="https://facebook.com" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
+                <a class="social-btn" href="https://instagram.com" target="_blank" title="Instagram"><i class="bi bi-instagram"></i></a>
+                <a class="social-btn" href="https://twitter.com" target="_blank" title="Twitter"><i class="bi bi-twitter"></i></a>
+                <a class="social-btn" href="https://linkedin.com" target="_blank" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            </div>
+        </div>
+        <!-- Separate Div for Home and Category Dropdowns -->
+        <div class="category-dropdowns d-flex flex-row align-items-center"  >
+            <a class="nav-link {{ request()->is('/') ? 'active' : '' }}" href="/">Home</a>
                 @php
                     $currentCategoryId = request()->segment(2) ? (int) request()->segment(2) : null;
                     $currentCategory = $currentCategoryId ? \App\Models\Category::find($currentCategoryId) : null;
                     $parentCategoryId = $currentCategory && $currentCategory->parent_id ? $currentCategory->parent_id : null;
                 @endphp
-                @foreach($categories as $category)
-                    <div class="nav-item dropdown dropup">
-                        <a class="nav-link {{ request()->is('products/' . $category->id) || $parentCategoryId == $category->id ? 'active' : '' }}" href="{{ route('products.category', $category->id) }}">{{ $category->name }}</a>
-                        @if($category->subcategories->isNotEmpty())
-                            <ul class="dropdown-menu">
-                                @foreach($category->subcategories as $subcategory)
-                                    <li><a class="dropdown-item {{ request()->is('products/' . $subcategory->id) ? 'active' : '' }}" href="{{ route('products.category', $subcategory->id) }}">{{ $subcategory->name }}</a></li>
-                                @endforeach
-                            </ul>
-                        @endif
-                    </div>
-                @endforeach
-                <a class="dress-btn ms-auto {{ request()->routeIs('dressup') ? 'active' : '' }}" href="{{ route('dressup') }}">Dress Up</a>
-                <div class="social-icons d-flex flex-row align-items-center">
-                    <a class="social-btn" href="https://wa.me/1234567890" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
-                    <a class="social-btn" href="https://facebook.com" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
-                    <a class="social-btn" href="https://instagram.com" target="_blank" title="Instagram"><i class="bi bi-instagram"></i></a>
-                    <a class="social-btn" href="https://twitter.com" target="_blank" title="Twitter"><i class="bi bi-twitter"></i></a>
-                    <a class="social-btn" href="https://linkedin.com" target="_blank" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            @foreach($categories as $category)
+                <div class="nav-item dropdown">
+                    <a class="nav-link {{ request()->is('products/' . $category->id) || $parentCategoryId == $category->id ? 'active' : '' }}" href="{{ route('products.category', $category->id) }}">{{ $category->name }}</a>
+                    @if($category->subcategories->isNotEmpty())
+                        <ul class="dropdown-menu">
+                            @foreach($category->subcategories as $subcategory)
+                                <li><a class="dropdown-item {{ request()->is('products/' . $subcategory->id) ? 'active' : '' }}" href="{{ route('products.category', $subcategory->id) }}">{{ $subcategory->name }}</a></li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </div>
-            </div>
+            @endforeach
         </div>
-    </nav>
-
+    </div>
+</nav>
     <!-- Main Content -->
     <div class="container mt-4">
-        @if(session('success'))
+        <!-- @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         @if(session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
+        @endif -->
         @yield('content')
     </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <!-- Navigation Links -->
-                <div class="col-md-3">
-                    <h5>Explore</h5>
-                    <ul>
-                        <li><a href="{{ route('home') }}">Home</a></li>
-                        @foreach($categories as $category)
-                            <li><a href="{{ route('products.category', $category->id) }}">{{ $category->name }}</a></li>
-                        @endforeach
-                        <li><a href="{{ route('dressup') }}">Dress Up</a></li>
-                    </ul>
-                </div>
-                <!-- Social Media -->
-                <div class="col-md-3">
-                    <h5>Follow Us</h5>
-                    <div class="social-icons d-flex">
-                        <a class="social-btn" href="https://wa.me/1234567890" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
-                        <a class="social-btn" href="https://facebook.com" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a class="social-btn" href="https://instagram.com" target="_blank" title="Instagram"><i class="bi bi-instagram"></i></a>
-                        <a class="social-btn" href="https://twitter.com" target="_blank" title="Twitter"><i class="bi bi-twitter"></i></a>
-                        <a class="social-btn" href="https://linkedin.com" target="_blank" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
-                    </div>
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <!-- Navigation Links -->
+            <div class="col-md-3">
+                <h5>Explore</h5>
+                <ul>
+                    <li><a href="{{ route('home') }}">Home</a></li>
+                    @foreach($categories as $category)
+                        <li><a href="{{ route('products.category', $category->id) }}">{{ $category->name }}</a></li>
+                    @endforeach
+                    <li><a href="{{ route('dressup') }}">Dress Up</a></li>
+                </ul>
+            </div>
+            <!-- Social Media -->
+            <div class="col-md-3">
+                <h5>Follow Us</h5>
+                <div class="social-icons d-flex">
+                    <a class="social-btn" href="https://wa.me/1234567890" target="_blank" title="WhatsApp"><i
+                            class="bi bi-whatsapp"></i></a>
+                    <a class="social-btn" href="https://facebook.com" target="_blank" title="Facebook"><i
+                            class="bi bi-facebook"></i></a>
+                    <a class="social-btn" href="https://instagram.com" target="_blank" title="Instagram"><i
+                            class="bi bi-instagram"></i></a>
+                    <a class="social-btn" href="https://twitter.com" target="_blank" title="Twitter"><i
+                            class="bi bi-twitter"></i></a>
+                    <a class="social-btn" href="https://linkedin.com" target="_blank" title="LinkedIn"><i
+                            class="bi bi-linkedin"></i></a>
                 </div>
             </div>
-            <div class="divider"></div>
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="copyright">
-                        &copy; {{ date('Y') }} Styler BD. All rights reserved. 
-                    </p>
-                </div>
+            <!-- Google Map Embed -->
+            <div class="col-md-6">
+                <h5>Our Location</h5>
+               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.388400356719!2d90.36100151112433!3d23.804783878544253!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c124e70bf59b%3A0x21b6f484e27a03e9!2sMirpur%20Shopping%20Center!5e0!3m2!1sen!2sbd!4v1756500533999!5m2!1sen!2sbd"width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
-    </footer>
-
+        <div class="divider"></div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="copyright">
+                    &copy; {{ date('Y') }} Styler BD. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

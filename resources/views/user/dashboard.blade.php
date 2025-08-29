@@ -23,9 +23,12 @@
                         <div class="row align-items-center">
                             <div class="col-md-3 text-center">
                                 @if(auth()->user()->profile_picture)
-                                    <img src="{{ asset(auth()->user()->profile_picture) }}" alt="{{ auth()->user()->name }}" class="img-fluid rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                                    <img src="{{ asset(auth()->user()->profile_picture) }}" alt="{{ auth()->user()->name }}"
+                                        class="img-fluid rounded-circle"
+                                        style="width: 120px; height: 120px; object-fit: cover;">
                                 @else
-                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 120px; height: 120px; font-size: 1.5rem; color: #666; font-weight: 600;">
+                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width: 120px; height: 120px; font-size: 1.5rem; color: #666; font-weight: 600;">
                                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                     </div>
                                 @endif
@@ -49,71 +52,79 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="section-title">Your Cart</h2>
-                        @if($cartItems->isEmpty())
-                            <p class="text-center text-muted">Your cart is empty.</p>
-                        @else
-                            <div class="table-responsive">
-                                <table class="table table-borderless">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Price</th>
-                                            <th>Quantity</th>
-                                            <th>Total</th>
-                                            <th>Actions</th>
+
+    <!-- Orders Table -->
+     <!-- Orders Table -->
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="section-title">Your Orders</h2>
+                    @if($orders->isEmpty())
+                        <p class="text-center text-muted">You have no orders.</p>
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $receivable = 0;
+                                        $paid = 0;
+                                        $hasPendingOrders = false;
+                                    @endphp
+                                    @foreach($orders as $order)
+                                        @php
+                                            if ($order->status === 'pending') {
+                                                $receivable += $order->total;
+                                                $hasPendingOrders = true;
+                                            } else {
+                                                $paid += $order->total;
+                                            }
+                                        @endphp
+                                        <tr class="order-row">
+                                            <td>{{ $order->id }}</td>
+                                            <td>{{ $order->payment_method }}</td>
+                                            <td>{{ ucfirst($order->status) }}</td>
+                                            <td>{{ $order->created_at->format('d M Y') }}</td>
+                                            <td><span class="card-price">৳{{ number_format($order->total, 2) }}</span></td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php $subtotal = 0; @endphp
-                                        @foreach($cartItems as $cartItem)
-                                            @php $subtotal += $cartItem->product->price * $cartItem->quantity; @endphp
-                                            <tr class="product-row">
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        @if($cartItem->product->images->isNotEmpty())
-                                                            <img src="{{ asset($cartItem->product->images->first()->image) }}" alt="{{ $cartItem->product->name }}" class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
-                                                        @else
-                                                            <div class="me-3 bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 8px; color: #666; font-size: 0.85rem;">No Image</div>
-                                                        @endif
-                                                        <h6 class="card-title mb-0">{{ $cartItem->product->name }}</h6>
-                                                    </div>
-                                                </td>
-                                                <td><span class="card-price">৳{{ number_format($cartItem->product->price, 2) }}</span></td>
-                                                <td>{{ $cartItem->quantity }}</td>
-                                                <td><span class="card-price">৳{{ number_format($cartItem->product->price * $cartItem->quantity, 2) }}</span></td>
-                                                <td>
-                                                    <form action="{{ route('cart.remove', $cartItem->id) }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                <!-- Subtotal -->
-                                <div class="d-flex justify-content-end mt-3">
-                                    <div class="subtotal-box p-3 bg-light rounded">
-                                        <h5 class="mb-0 fw-bold">Subtotal: <span class="text-primary">৳{{ number_format($subtotal, 2) }}</span></h5>
-                                    </div>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-end mt-3">
+                                <div class="subtotal-box p-3 bg-light rounded">
+                                    <h5 class="mb-1 fw-bold">Receivable (Due): <span class="text-danger">৳{{ number_format($receivable, 2) }}</span></h5>
+                                    <h5 class="mb-0 fw-bold">Paid: <span class="text-success">৳{{ number_format($paid, 2) }}</span></h5>
                                 </div>
                             </div>
-                            <div class="d-flex justify-content-end gap-2 mt-3">
-                                <a href="{{ route('home') }}" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-arrow-left-circle"></i> Continue Shopping
-                                </a>
-                                <a href="{{ route('cart.index') }}" class="btn btn-secondary btn-sm">
-                                    <i class="bi bi-cart"></i> View Full Cart
-                                </a>
-                            </div>
-                        @endif
-                    </div>
+                            @if($hasPendingOrders)
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <a href="{{ route('home') }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-arrow-left-circle"></i> Continue Shopping
+                                    </a>
+                                    <a href="{{ route('pay-pending-orders') }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-credit-card"></i> Pay Now
+                                    </a>
+                                </div>
+                            @else
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <a href="{{ route('home') }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-arrow-left-circle"></i> Continue Shopping
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 </div>
+            </div>
+
+
             </div>
         </div>
     </div>
@@ -128,10 +139,12 @@
             display: flex;
             align-items: center;
         }
+
         .dashboard-content {
             max-width: 800px;
             width: 100%;
         }
+
         .section-title {
             font-size: 1.6rem;
             font-weight: 600;
@@ -139,6 +152,7 @@
             margin-bottom: 1.5rem;
             font-family: 'Inter', sans-serif;
         }
+
         .card {
             border: none;
             border-radius: 12px;
@@ -146,10 +160,12 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .card:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
+
         .alert {
             border-radius: 10px;
             font-family: 'Inter', sans-serif;
@@ -157,39 +173,47 @@
             padding: 0.75rem;
             margin-bottom: 1.5rem;
         }
+
         .alert-success {
             background-color: #d4f4e2;
             border-color: #28a745;
             color: #1a6332;
         }
+
         .alert-danger {
             background-color: #f8d7da;
             border-color: #dc3545;
             color: #721c24;
         }
+
         .card-title {
             font-size: 1.2rem;
             font-weight: 500;
             color: #1a1a1a;
             font-family: 'Inter', sans-serif;
         }
+
         .card-price {
             font-size: 1rem;
             font-weight: 600;
             color: #2563eb;
         }
+
         .text-muted {
             font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
         }
+
         .table-responsive {
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
+
         .table {
             margin-bottom: 0;
         }
+
         .table thead th {
             background-color: #f1f5f9;
             color: #1a1a1a;
@@ -198,13 +222,16 @@
             font-family: 'Inter', sans-serif;
             font-size: 0.95rem;
         }
+
         .table tbody tr.product-row {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .table tbody tr.product-row:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+
         .table tbody td {
             vertical-align: middle;
             padding: 0.75rem;
@@ -213,6 +240,7 @@
             color: #2d3748;
             font-size: 0.9rem;
         }
+
         .btn {
             border-radius: 8px;
             font-family: 'Inter', sans-serif;
@@ -221,85 +249,107 @@
             padding: 0.5rem 1rem;
             transition: all 0.3s ease;
         }
+
         .btn-primary {
             background-color: #2563eb;
             border: none;
         }
+
         .btn-primary:hover {
             background-color: #1e40af;
             transform: translateY(-2px);
         }
+
         .btn-secondary {
             background-color: #6c757d;
             border: none;
         }
+
         .btn-secondary:hover {
             background-color: #5a6268;
             transform: translateY(-2px);
         }
+
         .btn-success {
             background-color: #16a34a;
             border: none;
         }
+
         .btn-success:hover {
             background-color: #15803d;
             transform: translateY(-2px);
         }
+
         .btn-outline-danger {
             border-color: #dc3545;
             color: #dc3545;
             padding: 0.25rem 0.5rem;
         }
+
         .btn-outline-danger:hover {
             background-color: #dc3545;
             color: #fff;
             transform: translateY(-2px);
         }
+
         .btn i {
             margin-right: 6px;
         }
+
         .subtotal-box {
             min-width: 200px;
             text-align: right;
             font-family: 'Inter', sans-serif;
         }
+
         .subtotal-box h5 {
             font-size: 1.25rem;
             color: #1a1a1a;
         }
+
         .subtotal-box .text-primary {
             color: #2563eb !important;
         }
+
         @media (max-width: 576px) {
             .section-title {
                 font-size: 1.4rem;
             }
+
             .card-title {
                 font-size: 1.1rem;
             }
+
             .dashboard-content {
                 margin: 0 1rem;
             }
-            .table thead th, .table tbody td {
+
+            .table thead th,
+            .table tbody td {
                 padding: 0.5rem;
                 font-size: 0.85rem;
             }
+
             .table img {
                 width: 40px;
                 height: 40px;
             }
+
             .btn {
                 width: 100%;
                 margin-bottom: 0.5rem;
             }
+
             .d-flex.gap-2 {
                 flex-direction: column;
             }
+
             .subtotal-box {
                 width: 100%;
                 text-align: center;
             }
         }
+
         .logout-btn {
             font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
@@ -308,12 +358,14 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
+
         .logout-btn:hover {
             background-color: #dc3545;
             color: #fff;
             border-color: #dc3545;
             transform: translateY(-2px);
         }
+
         .logout-btn i {
             margin-right: 5px;
         }

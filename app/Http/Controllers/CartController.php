@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-public function index()
+    public function index()
     {
         $cartItems = Cart::where('user_id', Auth::id())->with(['product' => function ($query) {
             $query->with('images');
@@ -102,6 +102,42 @@ public function index()
             ]);
             return response()->json(['error' => 'Failed to add products to cart: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+            'cart_id' => 'required|exists:carts,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cartItem = Cart::where('id', $validated['cart_id'])
+                        ->where('user_id', Auth::id())
+                        ->with('product')
+                        ->first();
+
+        if (!$cartItem) {
+            \Log::warning('Attempted to update invalid or unauthorized cart item', [
+                'cart_id' => $validated['cart_id'],
+                'user_id' => Auth::id()
+            ]);
+            return response()->json(['error' => 'Cart item not found'], 404);
+        }
+
+        $cartItem->quantity = $validated['quantity'];
+        $cartItem->save();
+
+        \Log::info('Cart item quantity updated', [
+            'user_id' => Auth::id(),
+            'cart_id' => $validated['cart_id'],
+            'new_quantity' => $validated['quantity']
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Quantity updated successfully',
+            'price' => $cartItem->product->price
+        ]);
     }
 
     public function remove($cart)

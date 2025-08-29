@@ -23,57 +23,54 @@
                 <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
             </div>
 
-            <!-- Alerts -->
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
 
-            <!-- Carts Table -->
+
+            <!-- Orders Table -->
             <div class="card shadow-sm">
                 <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Cart Items</h4>
+                    <h4 class="mb-0">Orders</h4>
                     <form action="{{ route('admin.orders') }}" method="GET" class="d-flex gap-2">
                         <input type="text" name="search" class="form-control form-control-sm" placeholder="Search by user name or email..." value="{{ request('search') }}">
                         <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
                     </form>
                 </div>
                 <div class="card-body">
-                    @if($carts->isEmpty())
-                        <p class="text-muted text-center">No cart items found.</p>
+                    @if($orders->isEmpty())
+                        <p class="text-muted text-center">No orders found.</p>
                     @else
                         <div class="table-responsive">
-                            <table class="table table-hover" id="carts-table">
+                            <table class="table table-hover" id="orders-table">
                                 <thead>
                                     <tr>
-                                        <th>Cart ID</th>
+                                        <th>Order ID</th>
                                         <th>User</th>
-                                        <th>Product</th>
-                                        <th>Subtotal</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
                                         <th>Date</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($carts as $cart)
-                                        <tr data-search="{{ strtolower($cart->user->name . ' ' . $cart->user->email) }}">
-                                            <td>{{ $cart->id }}</td>
+                                    @foreach($orders as $order)
+                                        <tr data-search="{{ strtolower($order->user->name . ' ' . $order->user->email) }}">
+                                            <td>{{ $order->id }}</td>
                                             <td>
-                                                <div>{{ $cart->user->name }}</div>
-                                                <small class="text-muted">{{ $cart->user->email }}</small>
+                                                <div>{{ $order->user->name }}</div>
+                                                <small class="text-muted">{{ $order->user->email }}</small>
                                             </td>
+                                            <td>৳{{ number_format($order->total, 2) }}</td>
                                             <td>
-                                                <div>{{ $cart->product->name }} (x{{ $cart->quantity }} @ ৳{{ number_format($cart->product->price, 2) }})</div>
+                                                <select class="form-control form-control-sm status-select" data-order-id="{{ $order->id }}">
+                                                    <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                                    <option value="confirmed" {{ $order->status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                                    <option value="shipped" {{ $order->status == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                                                    <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                                                </select>
                                             </td>
-                                            <td>৳{{ number_format($cart->quantity * $cart->product->price, 2) }}</td>
-                                            <td>{{ $cart->created_at->format('d M Y') }}</td>
+                                            <td>{{ $order->created_at->format('d M Y') }}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm update-status" data-order-id="{{ $order->id }}">Update</button>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -87,13 +84,15 @@
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        // Client-side search filtering
         document.addEventListener('DOMContentLoaded', function () {
             const searchInput = document.querySelector('input[name="search"]');
-            const tableRows = document.querySelectorAll('#carts-table tbody tr');
+            const tableRows = document.querySelectorAll('#orders-table tbody tr');
 
+            // Client-side search filtering
             searchInput.addEventListener('input', function () {
                 const searchTerm = searchInput.value.toLowerCase();
 
@@ -106,28 +105,61 @@
                     }
                 });
 
-                // Show "No cart items found" if no rows are visible
-                const tableBody = document.querySelector('#carts-table tbody');
-                const noCartsMessage = document.querySelector('.text-muted.text-center');
+                // Show "No orders found" if no rows are visible
+                const tableBody = document.querySelector('#orders-table tbody');
+                const noOrdersMessage = document.querySelector('.text-muted.text-center');
                 const visibleRows = Array.from(tableRows).filter(row => row.style.display !== 'none');
                 if (visibleRows.length === 0) {
-                    if (!noCartsMessage) {
+                    if (!noOrdersMessage) {
                         const message = document.createElement('p');
                         message.className = 'text-muted text-center';
-                        message.textContent = 'No cart items found.';
+                        message.textContent = 'No orders found.';
                         tableBody.parentElement.appendChild(message);
                     }
                 } else {
-                    if (noCartsMessage) {
-                        noCartsMessage.remove();
+                    if (noOrdersMessage) {
+                        noOrdersMessage.remove();
                     }
                 }
+            });
+
+            // Status update handling
+            $('.update-status').on('click', function() {
+                const orderId = $(this).data('order-id');
+                const status = $(`select[data-order-id="${orderId}"]`).val();
+
+                $.ajax({
+                    url: '{{ route("admin.orders.updateStatus") }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        order_id: orderId,
+                        status: status
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // const alert = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                            //     ${response.message}
+                            //     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            // </div>`;
+                            // $('.container').prepend(alert);
+                            // setTimeout(() => $('.alert').alert('close'), 3000);
+                        }
+                    },
+                    error: function(xhr) {
+                        const alert = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            Failed to update order status. Please try again.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`;
+                        $('.container').prepend(alert);
+                        setTimeout(() => $('.alert').alert('close'), 3000);
+                    }
+                });
             });
         });
     </script>
 
     <style>
-        /* Admin Section Styling */
         .admin-section {
             padding: 2rem 0;
             background-color: #f8f9fa;
@@ -143,7 +175,6 @@
             font-family: 'Inter', sans-serif;
             color: #4b5563;
         }
-        /* Profile Picture */
         .admin-profile-pic img, .profile-placeholder {
             width: 48px;
             height: 48px;
@@ -158,7 +189,6 @@
             text-align: center;
             line-height: 48px;
         }
-        /* Alert Styling */
         .alert {
             border-radius: 10px;
             margin-bottom: 1.5rem;
@@ -175,7 +205,6 @@
             border-color: #dc3545;
             color: #721c24;
         }
-        /* Button Styling */
         .btn-primary {
             background-color: #2563eb;
             border: none;
@@ -209,7 +238,6 @@
         .btn i {
             margin-right: 4px;
         }
-        /* Card Styling */
         .card {
             border: none;
             border-radius: 12px;
@@ -235,7 +263,6 @@
         .card-body {
             padding: 1.5rem;
         }
-        /* Table Styling */
         .table {
             border-radius: 8px;
             overflow: hidden;
@@ -264,7 +291,6 @@
             font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
         }
-        /* Search Input Styling */
         .form-control {
             border-radius: 6px;
             font-family: 'Inter', sans-serif;
@@ -279,7 +305,9 @@
         .form-control-sm {
             max-width: 200px;
         }
-        /* Responsive Styling */
+        .status-select {
+            width: 120px;
+        }
         @media (max-width: 991px) {
             .admin-title {
                 font-size: 1.5rem;
@@ -300,6 +328,9 @@
             }
             .form-control-sm {
                 max-width: 150px;
+            }
+            .status-select {
+                width: 100px;
             }
         }
         @media (max-width: 767px) {
@@ -327,6 +358,9 @@
                 width: 36px;
                 height: 36px;
                 font-size: 0.9rem;
+            }
+            .status-select {
+                width: 100%;
             }
         }
     </style>

@@ -29,6 +29,9 @@
                             <div id="selected-products" class="mb-4">
                                 <p class="text-muted">No products selected yet.</p>
                             </div>
+                            <div class="subtotal-box p-3 bg-light rounded mb-3">
+    <h5 class="mb-0 fw-bold">Subtotal: <span id="outfit-subtotal" class="text-primary">৳0.00</span></h5>
+</div>
                             <button id="finish-btn" class="btn btn-primary w-100" disabled>
                                 <i class="bi bi-cart-plus"></i> Finish and Add to Cart
                             </button>
@@ -84,7 +87,7 @@
                                 const select = document.createElement('select');
                                 select.className = 'form-control mb-3';
                                 select.onchange = loadProducts;
-                                select.innerHTML = '<option value="">Select a Subcategory</option>' + 
+                                select.innerHTML = '<option value="">Select a Subcategory</option>' +
                                     data.map(sub => `<option value="${sub.id}">${sub.name}</option>`).join('');
                                 subcategoriesDiv.appendChild(select);
                             })
@@ -124,77 +127,77 @@
                                     const card = document.createElement('div');
                                     card.className = 'col-lg-4 col-md-6 col-sm-6 mb-4';
                                     card.innerHTML = `
-                                        <div class="card product-card h-100">
-                                            ${product.images.length > 0 ? `
-                                                <div id="productCarousel${product.id}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-                                                    <div class="carousel-inner">
-                                                        ${product.images.map((img, index) => `
-                                                            <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                                                <img src="${img}" class="d-block w-100 card-img-top" alt="${product.name} Image ${index + 1}" data-bs-toggle="modal" data-bs-target="#productModal${product.id}">
-                                                            </div>
-                                                        `).join('')}
-                                                    </div>
-                                                </div>
-                                            ` : `
-                                                <div class="card-img-top text-center bg-light d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#productModal${product.id}">No Image</div>
-                                            `}
-                                            <div class="card-body">
-                                                <h5 class="card-title" data-bs-toggle="modal" data-bs-target="#productModal${product.id}">${product.name}</h5>
-                                                <p class="card-price">৳${Number(product.price).toFixed(2)}</p>
-                                                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#productModal${product.id}">
-                                                    <i class="bi bi-eye"></i> View
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <!-- Product Details Modal -->
-                                        <div class="modal fade" id="productModal${product.id}" tabindex="-1" aria-labelledby="productModalLabel${product.id}" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="productModalLabel${product.id}">${product.name}</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        ${product.images.length > 0 ? `
-                                                            <div id="productModalCarousel${product.id}" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="3000">
-                                                                <div class="carousel-inner">
-                                                                    ${product.images.map((img, index) => `
-                                                                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                                                            <img src="${img}" class="d-block w-100 modal-carousel-img" alt="${product.name} Image ${index + 1}">
-                                                                        </div>
-                                                                    `).join('')}
+                                                        <div class="card product-card h-100">
+                                                            ${product.images.length > 0 ? `
+                                                                <div id="productCarousel${product.id}" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                                                                    <div class="carousel-inner">
+                                                                        ${product.images.map((img, index) => `
+                                                                            <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                                                                <img src="${img}" class="d-block w-100 card-img-top" alt="${product.name} Image ${index + 1}" data-bs-toggle="modal" data-bs-target="#productModal${product.id}">
+                                                                            </div>
+                                                                        `).join('')}
+                                                                    </div>
                                                                 </div>
-                                                                <button class="carousel-control-prev" type="button" data-bs-target="#productModalCarousel${product.id}" data-bs-slide="prev">
-                                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                                    <span class="visually-hidden">Previous</span>
-                                                                </button>
-                                                                <button class="carousel-control-next" type="button" data-bs-target="#productModalCarousel${product.id}" data-bs-slide="next">
-                                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                                    <span class="visually-hidden">Next</span>
+                                                            ` : `
+                                                                <div class="card-img-top text-center bg-light d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#productModal${product.id}">No Image</div>
+                                                            `}
+                                                            <div class="card-body">
+                                                                <h5 class="card-title" data-bs-toggle="modal" data-bs-target="#productModal${product.id}">${product.name}</h5>
+                                                                <p class="card-price">৳${Number(product.price).toFixed(2)}</p>
+                                                                <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#productModal${product.id}">
+                                                                    <i class="bi bi-eye"></i> View
                                                                 </button>
                                                             </div>
-                                                        ` : `
-                                                            <p class="text-center">No Images Available</p>
-                                                        `}
-                                                        <p><strong>Description:</strong> ${product.description || 'No description available.'}</p>
-                                                        <p><strong>Price:</strong> ৳${Number(product.price).toFixed(2)}</p>
-                                                        <p><strong>Category:</strong> ${product.category}</p>
-                                                        <p><strong>Created At:</strong> ${product.created_at}</p>
-                                                        <p><strong>Updated At:</strong> ${product.updated_at}</p>
-                                                        <div class="input-group mt-3">
-                                                            <input type="number" class="form-control quantity-input" value="1" min="1" data-product-id="${product.id}">
-                                                            <button class="btn btn-primary add-to-cart" data-product-id="${product.id}" onclick="addToCart(${product.id}, '${escapeForJS(product.name)}', ${product.price}, '${product.images[0] || ''}', '${escapeForJS(product.description || '')}', '${escapeForJS(product.category)}', '${escapeForJS(product.created_at)}', '${escapeForJS(product.updated_at)}')">
-                                                                <i class="bi bi-cart-plus"></i> Add to Cart
-                                                            </button>
                                                         </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `;
+                                                        <!-- Product Details Modal -->
+                                                        <div class="modal fade" id="productModal${product.id}" tabindex="-1" aria-labelledby="productModalLabel${product.id}" aria-hidden="true">
+                                                            <div class="modal-dialog modal-lg">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="productModalLabel${product.id}">${product.name}</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        ${product.images.length > 0 ? `
+                                                                            <div id="productModalCarousel${product.id}" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="3000">
+                                                                                <div class="carousel-inner">
+                                                                                    ${product.images.map((img, index) => `
+                                                                                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                                                                            <img src="${img}" class="d-block w-100 modal-carousel-img" alt="${product.name} Image ${index + 1}">
+                                                                                        </div>
+                                                                                    `).join('')}
+                                                                                </div>
+                                                                                <button class="carousel-control-prev" type="button" data-bs-target="#productModalCarousel${product.id}" data-bs-slide="prev">
+                                                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                                                    <span class="visually-hidden">Previous</span>
+                                                                                </button>
+                                                                                <button class="carousel-control-next" type="button" data-bs-target="#productModalCarousel${product.id}" data-bs-slide="next">
+                                                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                                                    <span class="visually-hidden">Next</span>
+                                                                                </button>
+                                                                            </div>
+                                                                        ` : `
+                                                                            <p class="text-center">No Images Available</p>
+                                                                        `}
+                                                                        <p><strong>Description:</strong> ${product.description || 'No description available.'}</p>
+                                                                        <p><strong>Price:</strong> ৳${Number(product.price).toFixed(2)}</p>
+                                                                        <p><strong>Category:</strong> ${product.category}</p>
+                                                                        <p><strong>Created At:</strong> ${product.created_at}</p>
+                                                                        <p><strong>Updated At:</strong> ${product.updated_at}</p>
+                                                                        <div class="input-group mt-3">
+                                                                            <input type="number" class="form-control quantity-input" value="1" min="1" data-product-id="${product.id}">
+                                                                            <button class="btn btn-primary add-to-cart" data-product-id="${product.id}" onclick="addToCart(${product.id}, '${escapeForJS(product.name)}', ${product.price}, '${product.images[0] || ''}', '${escapeForJS(product.description || '')}', '${escapeForJS(product.category)}', '${escapeForJS(product.created_at)}', '${escapeForJS(product.updated_at)}')">
+                                                                                <i class="bi bi-cart-plus"></i> Add to Cart
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    `;
                                     productsDiv.appendChild(card);
                                 });
                             })
@@ -232,54 +235,89 @@
                         if (selectedProducts.length === 0) {
                             selectedDiv.innerHTML = '<p class="text-muted">No products selected yet.</p>';
                             finishBtn.disabled = true;
+                            document.getElementById('outfit-subtotal') ? document.getElementById('outfit-subtotal').textContent = '৳0.00' : null;
                             return;
                         }
 
+                        let subtotal = 0;
                         finishBtn.disabled = false;
                         selectedProducts.forEach(product => {
+                            const itemTotal = product.price * product.quantity;
+                            subtotal += itemTotal;
                             const item = document.createElement('div');
                             item.className = 'card product-card mb-2';
                             item.innerHTML = `
-                                <div class="card-body d-flex align-items-center">
-                                    ${product.image ? `<img src="${product.image}" alt="${product.name}" class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">` : 
+                    <div class="card-body d-flex align-items-center">
+                        ${product.image ? `<img src="${product.image}" alt="${product.name}" class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">` :
                                     '<div class="me-3 bg-light d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 8px;">No Image</div>'}
-                                    <div>
-                                        <h6 class="card-title mb-0">${product.name}</h6>
-                                        <p class="card-price mb-0">৳${Number(product.price).toFixed(2)} x ${product.quantity}</p>
-                                    </div>
-                                    <button class="btn btn-sm btn-danger ms-auto" onclick="removeProduct(${product.id})">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            `;
+                        <div class="flex-grow-1">
+                            <h6 class="card-title mb-0">${product.name}</h6>
+                            <p class="card-price mb-0">৳${Number(product.price).toFixed(2)} x 
+                                <input type="number" class="form-control quantity-input d-inline-block" style="width: 60px;" value="${product.quantity}" min="1" data-product-id="${product.id}">
+                            </p>
+                        </div>
+                        <button class="btn btn-sm btn-danger ms-auto" onclick="removeProduct(${product.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                `;
                             selectedDiv.appendChild(item);
                         });
-                    }
 
-                    document.getElementById('finish-btn').addEventListener('click', () => {
-                        if (selectedProducts.length === 0) return;
+                        // Update subtotal display
+                        const subtotalDisplay = document.getElementById('outfit-subtotal');
+                        if (subtotalDisplay) {
+                            subtotalDisplay.textContent = `৳${subtotal.toFixed(2)}`;
+                        }
 
-                        fetch('{{ route('cart.bulk-add') }}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({ products: selectedProducts })
-                        })
-                        .then(response => {
-                            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                            return response.json();
-                        })
-                        .then(data => {
-                            window.location.href = '{{ route('cart.index') }}';
-                        })
-                        .catch(error => {
-                            console.error('Error adding to cart:', error);
-                            alert('Failed to add outfit to cart. Please try again.');
+                        // Add event listeners for quantity inputs
+                        document.querySelectorAll('.quantity-input').forEach(input => {
+                            input.addEventListener('change', function () {
+                                const productId = parseInt(this.dataset.productId);
+                                let quantity = parseInt(this.value) || 1;
+                                if (quantity < 1) {
+                                    quantity = 1;
+                                    this.value = 1;
+                                }
+                                const product = selectedProducts.find(p => p.id === productId);
+                                if (product) {
+                                    product.quantity = quantity;
+                                    updateSelectedProducts();
+                                }
+                            });
                         });
-                    });
+                    }
+       document.getElementById('finish-btn').addEventListener('click', () => {
+    if (selectedProducts.length === 0) return;
+
+    fetch('{{ route('cart.bulk-add') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ products: selectedProducts.map(p => ({ id: p.id, quantity: p.quantity })) })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+    })
+    .then(data => {
+        window.location.href = '{{ route('cart.index') }}';
+    })
+    .catch(error => {
+        console.error('Error adding to cart:', error);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-danger alert-dismissible fade show';
+        errorDiv.innerHTML = `
+            Failed to add outfit to cart. Please try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document.querySelector('.container').prepend(errorDiv);
+        setTimeout(() => errorDiv.classList.remove('show'), 3000);
+    });
+});
                 </script>
 
                 <style>
@@ -287,6 +325,7 @@
                     .shop-section {
                         padding: 1rem 0;
                     }
+
                     .shop-title {
                         font-size: 2.8rem;
                         font-weight: 600;
@@ -294,43 +333,53 @@
                         text-align: center;
                         margin-bottom: 1rem;
                     }
+
                     .filter-sidebar {
                         background-color: #ffffff;
                         padding: 2rem;
                         border-radius: 12px;
                         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                     }
+
                     .filter-title {
                         font-size: 1.5rem;
                         font-weight: 600;
                         color: #222;
                         margin-bottom: 1.5rem;
                     }
-                    .form-control, .btn {
+
+                    .form-control,
+                    .btn {
                         border-radius: 8px;
                         font-family: 'Poppins', sans-serif;
                         transition: all 0.3s ease;
                     }
+
                     .form-control:focus {
                         border-color: #007bff;
                         box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
                     }
+
                     .btn-primary {
                         background-color: #007bff;
                         border: none;
                         font-weight: 500;
                     }
+
                     .btn-primary:hover {
                         background-color: #0056b3;
                     }
+
                     .btn-danger {
                         background-color: #dc3545;
                         border: none;
                         font-weight: 500;
                     }
+
                     .btn-danger:hover {
                         background-color: #b02a37;
                     }
+
                     .product-card {
                         border: none;
                         border-radius: 12px;
@@ -338,10 +387,12 @@
                         background-color: #ffffff;
                         transition: transform 0.3s ease, box-shadow 0.3s ease;
                     }
+
                     .product-card:hover {
                         transform: translateY(-8px);
                         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
                     }
+
                     .card-img-top {
                         height: 220px;
                         object-fit: cover;
@@ -349,6 +400,7 @@
                         border-top-right-radius: 12px;
                         cursor: pointer;
                     }
+
                     .card-img-top.bg-light {
                         display: flex;
                         align-items: center;
@@ -359,9 +411,11 @@
                         background-color: #f8f9fa;
                         cursor: pointer;
                     }
+
                     .card-body {
                         padding: 1.5rem;
                     }
+
                     .card-title {
                         font-size: 1.3rem;
                         font-weight: 500;
@@ -369,66 +423,84 @@
                         margin-bottom: 0.5rem;
                         cursor: pointer;
                     }
+
                     .card-price {
                         font-size: 1.2rem;
                         font-weight: 600;
                         color: #007bff;
                         margin-bottom: 1rem;
                     }
+
                     .input-group .form-control.quantity-input {
                         max-width: 70px;
                         border-radius: 8px 0 0 8px;
                     }
+
                     .btn i {
                         margin-right: 6px;
                     }
+
                     /* Carousel Styling */
                     .carousel-inner img {
                         height: 220px;
                         object-fit: cover;
                     }
+
                     /* Modal Styling */
                     .modal-content {
                         border-radius: 12px;
                         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                     }
+
                     .modal-header {
                         border-bottom: none;
                         background-color: #f8f9fa;
                         border-radius: 12px 12px 0 0;
                     }
+
                     .modal-body {
                         padding: 1.5rem;
                     }
+
                     .modal-body strong {
                         font-weight: 600;
                         color: #222;
                     }
+
                     .modal-body p {
                         margin-bottom: 1rem;
                         color: #555;
                     }
+
                     .modal-carousel-img {
                         height: 300px;
                         object-fit: contain;
                     }
-                    .carousel-control-prev, .carousel-control-next {
+
+                    .carousel-control-prev,
+                    .carousel-control-next {
                         filter: invert(1);
                     }
+
                     @media (max-width: 991px) {
                         .filter-sidebar {
                             padding: 1.5rem;
                         }
+
                         .shop-title {
                             font-size: 2.2rem;
                         }
-                        .card-img-top, .carousel-inner img {
+
+                        .card-img-top,
+                        .carousel-inner img {
                             height: 180px;
                         }
+
                         .modal-carousel-img {
                             height: 200px;
                         }
                     }
+
                     @media (max-width: 767px) {
                         .filter-sidebar {
                             margin-bottom: 2rem;
@@ -436,7 +508,8 @@
                     }
                 </style>
             @else
-                <p class="text-center text-muted">Please <a href="{{ route('login') }}" class="text-primary">login</a> to use the Dress Up feature.</p>
+                <p class="text-center text-muted">Please <a href="{{ route('login') }}" class="text-primary">login</a> to use
+                    the Dress Up feature.</p>
             @endauth
         </div>
     </div>

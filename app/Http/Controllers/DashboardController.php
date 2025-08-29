@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -53,10 +54,8 @@ class DashboardController extends Controller
         }
 
         $user = Auth::user();
-        $cartItems = Cart::where('user_id', Auth::id())->with(['product' => function ($query) {
-            $query->with('images');
-        }])->get();
-        return view('user.dashboard', compact('user', 'cartItems'));
+        $orders = Order::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+        return view('user.dashboard', compact('user', 'orders'));
     }
 
     public function editProfile()
