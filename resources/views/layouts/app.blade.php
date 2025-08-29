@@ -145,7 +145,7 @@
 
         .social-btn:hover {
             color: #007bff;
-            transform: scale(1.2);
+            
         }
 
         /* Dropup Styling */
@@ -219,7 +219,7 @@
         }
 
         .dress-btn:hover {
-            transform: scale(1.05);
+            
             box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
             color: #fff;
         }
@@ -282,7 +282,7 @@
 
         .footer .social-btn:hover {
             color: #007bff;
-            transform: scale(1.2);
+            
         }
 
         .footer .newsletter-form .form-control {
